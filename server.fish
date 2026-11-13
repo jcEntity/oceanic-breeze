@@ -1,5 +1,6 @@
 #!/usr/bin/env fish
 
+rm -f data_pipe
 mkfifo data_pipe
 
 function clean_exit --on-signal INT --on-signal TERM
@@ -12,7 +13,7 @@ function request_handler
   set -l request_line ""
   set -l requested_path ""
 
-  while read -l line
+  while read --line line
     set line (string trim -r -c \r -- $line)
 
     if test -z "$request_line" #we only want the first line
@@ -24,10 +25,17 @@ function request_handler
     end
   end
 
+  if test -z "$request_line"
+    printf "HTTP/1.1 400 Bad Request\r\n"
+    printf "Connection: close\r\n"
+    printf "\r\n"
+    break
+  end
+
   set -l method (awk '{print $1}' $request_line)
   set -l path (awk '{print $2}' $request_line)
 
-  if [ method = "GET" ]
+  if [ $method = "GET" ]
     # response headers; we have to use CRLF apparently because of RFC 2616
     printf "HTTP/1.1 200 OK\r\n"
     printf "Content-Type: text/plain\r\n"
