@@ -3,12 +3,6 @@
 rm -f data_pipe
 mkfifo data_pipe
 
-function clean_exit --on-signal INT --on-signal TERM
-  rm -f data_pipe
-  # exit is needed so it actually quits
-  exit 0
-end
-
 function request_handler
   set -l request_line ""
   set -l requested_path ""
