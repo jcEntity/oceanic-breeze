@@ -29,7 +29,7 @@ function request_handler
     printf "HTTP/1.1 400 Bad Request\r\n"
     printf "Connection: close\r\n"
     printf "\r\n"
-    break
+    return
   end
 
   set -l request_parts (string split " " -- $request_line)
