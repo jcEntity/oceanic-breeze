@@ -55,5 +55,5 @@ function request_handler
 end
 
 while true
-  nc -l 8080 < data_pipe | request_handler > data_pipe
+  nc -N -l 8080 < data_pipe | request_handler > data_pipe
 end
