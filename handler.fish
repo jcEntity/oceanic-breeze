@@ -1,3 +1,5 @@
+set -l static_folder (path resolve ./static/)
+
 set -l request_line ""
 set -l requested_path ""
 
@@ -25,14 +27,26 @@ set -l method $request_parts[1]
 set -l path $request_parts[2]
 
 if [ $method = "GET" ]
-  # response headers; we have to use CRLF apparently because of RFC 2616
-  printf "HTTP/1.1 200 OK\r\n"
-  printf "Content-Type: text/plain\r\n"
-  printf "Connection: close\r\n"
-  printf "\r\n"
+  if [ $path = "/" ]
+    set path "/index.html"
+  end
+
+  set -l filepath (path normalize "$static_folder/$path")
+  if string match -q -- "$static_folder*" "$filepath"
+    # response headers; we have to use CRLF apparently because of RFC 2616
+    printf "HTTP/1.1 200 OK\r\n"
+    printf "Content-Type: text/html\r\n"
+    printf "Connection: close\r\n"
+    printf "\r\n"
+  else
+    printf "HTTP/1.1 403 Forbidden\r\n"
+    printf "Connection: close\r\n"
+    printf "\r\n"
+    return
+  end
 
   # response body
-  printf "You tried to GET %s\n" "$path"
+  cat $filepath
 else
   # catchall - 405 Method Not Allowed
   printf "HTTP/1.1 405 Method Not Allowed\r\n"
