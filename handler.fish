@@ -33,9 +33,10 @@ if [ $method = "GET" ]
 
   set -l filepath (path normalize "$static_folder/$path")
   if string match -q -- "$static_folder*" "$filepath"
+    set -l mime (file -b --mime-type "$filepath")
     # response headers; we have to use CRLF apparently because of RFC 2616
     printf "HTTP/1.1 200 OK\r\n"
-    printf "Content-Type: text/html\r\n"
+    printf "Content-Type: $mime\r\n"
     printf "Connection: close\r\n"
     printf "\r\n"
   else
