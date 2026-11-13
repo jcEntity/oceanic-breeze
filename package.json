@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "sass --load-path=node_modules scss/style.scss static/style.css --no-source-map --style=compressed"
+  },
+  "devDependencies": {
+    "@webtui/css": "^0.1.10",
+    "@webtui/theme-catppuccin": "^0.0.5",
+    "sass": "^1.108.2"
+  }
+}
