@@ -32,8 +32,9 @@ function request_handler
     break
   end
 
-  set -l method (awk '{print $1}' $request_line)
-  set -l path (awk '{print $2}' $request_line)
+  set -l request_parts (string split " " -- $request_line)
+  set -l method $request_parts[1]
+  set -l path $request_parts[2]
 
   if [ $method = "GET" ]
     # response headers; we have to use CRLF apparently because of RFC 2616
